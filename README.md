@@ -12,8 +12,7 @@ Filter by reason, college, and visitor type
 
 ## GitHub Repository
 
-https://github.com/yourusername/neu-library-visitor-log
+https://github.com/geeannrodil/neu-library
 
 ## Live Application
-
-https://your-app.onrender.com
+https://neu-library.onrender.com
