@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEU Library - Visitor Entry</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body id="visitor-page">
+    <div class="header-banner">
+        <img src="logo.png" style="height: 70px; width: auto; margin-right: 20px;">
+        <div>
+            <h1 class="header-title">NEW ERA UNIVERSITY</h1>
+            <p class="header-subtitle">Library Visitor Log</p>
+        </div>
+    </div>
+
+    <div class="visitor-card">
+        <h2 class="card-title">Visitor Entry</h2>
+        <input type="text" id="v_name" placeholder="FULL NAME" class="pill-input">
+        <input type="text" id="v_sid" placeholder="STUDENT ID" class="pill-input">
+        <select id="v_college" class="pill-input">
+            <option value="">SELECT COLLEGE</option>
+            <option value="CICS">CICS</option>
+            <option value="CBA">CBA</option>
+            <option value="CAS">CAS</option>
+        </select>
+        <select id="v_type" class="pill-input">
+            <option value="STUDENT">STUDENT</option>
+            <option value="FACULTY">FACULTY</option>
+        </select>
+        <input type="text" id="v_reason" placeholder="REASON" class="pill-input">
+
+        <button class="btn-login" onclick="manualSubmit()">LOG IN</button>
+
+        <div class="separator">OR ADMIN ACCESS</div>
+        
+        <div id="g_id_onload"
+             data-client_id="316520894915-d3kl097kp2qb0j0ddqtsqno29807gt3t.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" style="display: flex; justify-content: center;"></div>
+    </div>
+
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="welcome-pill">WELCOME TO NEU LIBRARY, <span id="display-name"></span>!</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
