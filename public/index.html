@@ -3,59 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEU Library - Visitor Check-in</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>NEU Library - Check-in</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body>
+<body class="visitor-page">
 
     <div class="split-container">
-        
         <div class="left-panel">
-            <img src="./neu-logo.png" alt="NEU Logo" class="brand-logo">
+            <img src="neu-logo.png" alt="NEU" class="brand-logo">
             <h2 class="brand-subtitle">NEW ERA UNIVERSITY</h2>
             <h1 class="brand-title">Library</h1>
-            <p class="brand-subtext">Visitor Check-in</p>
-
-            <div class="clock-container">
-                <h1 id="live-time">00:00:00 AM</h1>
-                <p id="live-date">Loading date...</p>
+            <div class="clock-box">
+                <h1 id="live-time">00:00:00</h1>
+                <p id="live-date">Loading...</p>
             </div>
         </div>
 
         <div class="right-panel">
-            <div class="glass-card">
+            <div id="step-login" class="glass-card">
                 <div class="card-header">
                     <h2>Check-in / Out</h2>
                     <span class="status-badge"><span class="dot"></span> OPEN</span>
                 </div>
+                <p class="instruction">Please sign in with your Google account.</p>
                 
-                <p class="instruction-text">Sign in with your Google account to check in or out.</p>
-
                 <div id="g_id_onload"
-                     data-client_id="316520894915-d3kl097kp2qb0j0ddqtsqno29807gt3t.apps.googleusercontent.com"
-                     data-callback="handleCredentialResponse"
-                     data-auto_prompt="false">
-                     </div>
-                
-                <div class="google-btn-wrapper">
-                    <div class="g_id_signin"
-                         data-type="standard"
-                         data-size="large"
-                         data-theme="outline"
-                         data-text="sign_in_with"
-                         data-shape="pill"
-                         data-logo_alignment="left">
-                    </div>
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE"
+                     data-callback="handleCredentialResponse">
                 </div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill"></div>
+                <p id="block-msg" class="error-text" style="display:none;">Access Restricted: Contact Admin.</p>
+            </div>
 
-                <div class="divider">
-                    <span>Library Management System</span>
+            <div id="step-reason" class="glass-card" style="display:none;">
+                <h2>Purpose of Visit</h2>
+                <p class="instruction">What brings you to the library today?</p>
+                <div class="reason-grid">
+                    <button onclick="submitVisit('Studying')">📖 Studying</button>
+                    <button onclick="submitVisit('Research')">🔍 Research</button>
+                    <button onclick="submitVisit('Borrowing')">📚 Borrowing</button>
+                    <button onclick="submitVisit('Computer')">💻 Computer Use</button>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div id="welcome-overlay" class="modal-overlay">
+        <div class="welcome-card">
+            <div class="check-circle">✓</div>
+            <h1>SUCCESSFUL!</h1>
+            <p id="visitor-name"></p>
+            <small>Redirecting...</small>
+        </div>
     </div>
 
     <script src="script.js"></script>

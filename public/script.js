@@ -1,58 +1,65 @@
-let currentVisitor = null;
+let currentUser = null;
 
 // --- CLOCK ---
 function updateClock() {
     const now = new Date();
-    if(document.getElementById('live-time')) {
-        document.getElementById('live-time').innerText = now.toLocaleTimeString();
+    const timeEl = document.getElementById('live-time');
+    if (timeEl) {
+        timeEl.innerText = now.toLocaleTimeString();
         document.getElementById('live-date').innerText = now.toDateString();
     }
 }
 setInterval(updateClock, 1000);
 
-// --- VISITOR LOGIC ---
+// --- AUTH HANDLER ---
 function handleCredentialResponse(response) {
-    const user = parseJwt(response.credential);
+    const payload = parseJwt(response.credential);
+    
     fetch('/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email })
-    }).then(res => res.json()).then(data => {
-        if(data.blocked) {
+        body: JSON.stringify({ email: payload.email })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.blocked) {
             document.getElementById('block-msg').style.display = 'block';
-        } else if(data.role === 'admin') {
+        } else if (data.role === 'admin') {
             window.location.href = '/admin.html';
         } else {
-            currentVisitor = user;
+            // TRANSITION TO REASON PICKER
+            currentUser = payload;
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-reason').style.display = 'block';
         }
     });
 }
 
+// --- RECORD VISIT ---
 function submitVisit(reason) {
-    const entry = { name: currentVisitor.name, email: currentVisitor.email, reason: reason };
+    const data = { name: currentUser.name, email: currentUser.email, reason: reason };
     fetch('/visit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
-    }).then(() => {
-        document.getElementById('visitor-name').innerText = currentVisitor.name;
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        document.getElementById('visitor-name').innerText = currentUser.name;
         document.getElementById('welcome-overlay').style.display = 'flex';
         setTimeout(() => location.reload(), 3000);
     });
 }
 
-// --- ADMIN LOGIC ---
-function loadAdminData() {
-    if(!document.getElementById('adminLogBody')) return;
+// --- ADMIN DASHBOARD ---
+function loadDashboard() {
+    if (!document.getElementById('logBody')) return;
     fetch('/admin-data').then(res => res.json()).then(data => {
-        document.getElementById('stat-today').innerText = data.stats.today;
-        document.getElementById('stat-week').innerText = data.stats.week;
-        document.getElementById('stat-total').innerText = data.stats.total;
-        document.getElementById('stat-inside').innerText = data.stats.currentlyInside;
+        document.getElementById('s-today').innerText = data.stats.today;
+        document.getElementById('s-week').innerText = data.stats.week;
+        document.getElementById('s-month').innerText = data.stats.month;
+        document.getElementById('s-total').innerText = data.stats.total;
 
-        document.getElementById('adminLogBody').innerHTML = data.logs.map(log => `
+        document.getElementById('logBody').innerHTML = data.logs.map(log => `
             <tr>
                 <td>${log.name}</td>
                 <td>${log.email}</td>
@@ -65,32 +72,27 @@ function loadAdminData() {
 }
 
 function blockUser(email) {
-    if(confirm(`Block ${email}?`)) {
+    if (confirm(`Block ${email}?`)) {
         fetch('/block-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
-        }).then(() => alert('User Blocked'));
+        }).then(() => loadDashboard());
     }
-}
-
-function filterTable() {
-    let val = document.getElementById("searchBar").value.toLowerCase();
-    document.querySelectorAll("#adminLogBody tr").forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
-    });
 }
 
 function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text("NEU Library Logs", 14, 15);
+    doc.text("NEU Library Visitor Logs", 14, 15);
     doc.autoTable({ html: '#logTable', startY: 20 });
     doc.save("Library_Logs.pdf");
 }
 
 function parseJwt(token) {
-    return JSON.parse(atob(token.split('.')[1]));
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(window.atob(base64));
 }
 
-window.onload = () => { updateClock(); loadAdminData(); };
+window.onload = () => { updateClock(); loadDashboard(); };

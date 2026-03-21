@@ -2,51 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard - NEU Library</title>
+    <title>Admin Panel - NEU Library</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body class="admin-bg">
+<body class="admin-page">
     <div class="admin-layout">
-        <div class="sidebar">
-            <img src="logo.png" class="sidebar-logo">
+        <aside class="sidebar">
+            <img src="neu-logo.png" class="side-logo">
             <nav>
-                <button class="nav-btn active">📊 Dashboard</button>
-                <button class="nav-btn" onclick="exportToPDF()">📄 Export PDF</button>
-                <a href="/" class="nav-btn logout">🚪 Logout</a>
+                <button class="nav-item active">Dashboard</button>
+                <button class="nav-item" onclick="exportToPDF()">Export PDF</button>
+                <a href="/" class="nav-item logout">Logout</a>
             </nav>
-        </div>
+        </aside>
 
-        <div class="admin-main">
-            <div class="stats-grid">
-                <div class="stat-card"><h3>Today</h3><h1 id="stat-today">0</h1></div>
-                <div class="stat-card"><h3>This Week</h3><h1 id="stat-week">0</h1></div>
-                <div class="stat-card"><h3>Inside</h3><h1 id="stat-inside">0</h1></div>
-                <div class="stat-card highlight"><h3>Total</h3><h1 id="stat-total">0</h1></div>
-            </div>
+        <main class="main-content">
+            <header>
+                <h1>Library Analytics</h1>
+            </header>
 
-            <div class="log-section">
-                <div class="table-header">
-                    <h2>Visitor Logs</h2>
-                    <input type="text" id="searchBar" placeholder="Search visitors..." onkeyup="filterTable()">
+            <section class="stats-row">
+                <div class="stat-box"><span>Today</span><h2 id="s-today">0</h2></div>
+                <div class="stat-box"><span>This Week</span><h2 id="s-week">0</h2></div>
+                <div class="stat-box"><span>This Month</span><h2 id="s-month">0</h2></div>
+                <div class="stat-box accent"><span>Total Logs</span><h2 id="s-total">0</h2></div>
+            </section>
+
+            <section class="table-card">
+                <div class="table-tools">
+                    <h3>Recent Visitors</h3>
+                    <input type="text" id="search" placeholder="Search name or email..." onkeyup="searchLogs()">
                 </div>
-                <div class="table-wrapper">
+                <div class="scroll-area">
                     <table id="logTable">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Reason</th>
-                                <th>Date/Time</th>
+                                <th>Purpose</th>
+                                <th>Timestamp</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="adminLogBody"></tbody>
+                        <tbody id="logBody"></tbody>
                     </table>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>
