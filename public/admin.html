@@ -8,13 +8,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="admin-page">
+    
     <div class="admin-layout">
         <aside class="sidebar">
             <img src="neu-logo.png" class="side-logo">
             <nav>
-                <button class="nav-item active">Dashboard</button>
-                <button class="nav-item" onclick="exportToPDF()">Export PDF</button>
-                <a href="/" class="nav-item logout">Logout</a>
+                <button class="nav-item active">📊 Dashboard</button>
+                <button class="nav-item" onclick="exportToPDF()">📄 Export PDF</button>
+                <a href="/" class="nav-item logout">🚪 Logout</a>
             </nav>
         </aside>
 
@@ -33,9 +34,9 @@
             <section class="table-card">
                 <div class="table-tools">
                     <h3>Recent Visitors</h3>
-                    <input type="text" id="search" placeholder="Search name or email..." onkeyup="searchLogs()">
+                    <input type="text" id="search" class="search-box" placeholder="Search visitors..." onkeyup="searchLogs()">
                 </div>
-                <div class="scroll-area">
+                <div style="overflow-x: auto;">
                     <table id="logTable">
                         <thead>
                             <tr>
@@ -46,12 +47,14 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="logBody"></tbody>
+                        <tbody id="logBody">
+                            </tbody>
                     </table>
                 </div>
             </section>
         </main>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

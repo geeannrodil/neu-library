@@ -1,161 +1,141 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+    --bg-dark: #0d0914;
+    --glass-bg: rgba(25, 20, 40, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-purple: #bb86fc;
+    --text-dim: #a89bbd;
+    --success-green: #2ecc71;
+    --danger-red: #ff4d4d;
 }
 
-body {
-    /* Uses your purple geometric background */
-    background: #0d0914 url('./Screenshot 2026-03-19 213759.png') no-repeat center center fixed;
-    background-size: cover;
-    color: #ffffff;
-    min-height: 100vh;
-    overflow: hidden; /* Prevents scrollbars on the welcome screen */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+/* =========================================
+   GLOBAL BACKGROUND (Replaces Image)
+========================================= */
+body { 
+    /* Deep purple-to-black gradient */
+    background: radial-gradient(circle at center, #1a1229 0%, #0d0914 100%);
+    background-attachment: fixed;
+    color: white; 
+    min-height: 100vh; 
 }
 
-/* Split Layout Container */
+/* =========================================
+   1. VISITOR KIOSK (index.html)
+========================================= */
+.visitor-page {
+    background: transparent; 
+    overflow: hidden;
+}
+
 .split-container {
     display: flex;
-    min-height: 100vh;
-    width: 100%;
-    background: rgba(13, 9, 20, 0.4); /* Dark overlay to make text pop */
+    height: 100vh;
+    background: transparent;
 }
 
-/* Left Panel: Centered Content */
 .left-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
+    flex: 1.2; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
     text-align: center;
+    position: relative;
 }
 
-.brand-logo {
-    width: 120px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+/* Subtle glow behind the logo/clock for that "Wow" factor */
+.left-panel::before {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: var(--accent-purple);
+    filter: blur(150px);
+    opacity: 0.15;
+    z-index: -1;
 }
 
-.brand-subtitle {
-    font-size: 0.9rem;
-    letter-spacing: 3px;
-    color: #a89bbd;
-    margin-bottom: 5px;
-}
-
-.brand-title {
-    font-size: 4rem;
-    font-family: 'Times New Roman', serif; /* Matching the elegant serif look */
-    margin-bottom: 5px;
-}
-
-.brand-subtext {
-    font-size: 1.2rem;
-    color: #d4c5e6;
-    margin-bottom: 40px;
-}
-
-.clock-container {
-    margin-top: 20px;
-}
-
-#live-time {
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-#live-date {
-    font-size: 1rem;
-    color: #a89bbd;
-    margin-top: 5px;
-}
-
-/* Right Panel: Glassmorphism Card */
 .right-panel {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
+    flex: 1; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px;
 }
+
+.brand-logo { width: 130px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
+.brand-title { font-size: 4.5rem; font-family: 'Times New Roman', serif; margin-bottom: 10px; }
+.clock-box { margin-top: 30px; }
+.clock-box h1 { font-size: 3.5rem; letter-spacing: 2px; }
+.clock-box p { color: var(--text-dim); font-size: 1.2rem; }
 
 .glass-card {
-    background: rgba(25, 20, 40, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 40px;
-    width: 100%;
-    max-width: 450px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    padding: 40px; border-radius: 24px; border: 1px solid var(--glass-border);
+    width: 100%; max-width: 450px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.status-badge { background: rgba(46,204,113,0.1); color: var(--success-green); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(46,204,113,0.3); display: flex; align-items: center; gap: 5px; }
+.dot { width: 8px; height: 8px; background: var(--success-green); border-radius: 50%; box-shadow: 0 0 8px var(--success-green); }
 
-.card-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
+.instruction { color: var(--text-dim); margin-bottom: 30px; line-height: 1.5; }
 
-.status-badge {
-    background: rgba(46, 204, 113, 0.1);
-    color: #2ecc71;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid rgba(46, 204, 113, 0.3);
+.reason-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.reason-grid button {
+    padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.05); color: white; cursor: pointer; transition: 0.3s; font-size: 1rem;
 }
+.reason-grid button:hover { background: var(--accent-purple); color: black; font-weight: bold; transform: translateY(-2px); }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    background: #2ecc71;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #2ecc71;
+/* =========================================
+   2. WELCOME OVERLAY
+========================================= */
+.modal-overlay {
+    display: none; /* Hidden by default, triggered by JS */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+    justify-content: center; align-items: center; z-index: 9999;
 }
+.welcome-card { text-align: center; background: var(--glass-bg); padding: 50px; border-radius: 30px; border: 1px solid var(--success-green); }
+.check-circle { font-size: 70px; color: var(--success-green); margin-bottom: 10px; }
+.welcome-card h1 { margin-bottom: 10px; }
+.welcome-card p { font-size: 1.5rem; color: var(--accent-purple); margin-bottom: 20px; }
 
-.instruction-text {
-    color: #a89bbd;
-    font-size: 0.95rem;
-    margin-bottom: 30px;
-    line-height: 1.5;
-}
+/* =========================================
+   3. ADMIN DASHBOARD (admin.html)
+========================================= */
+.admin-page { background: #08050a; overflow: hidden; }
+.admin-layout { display: flex; height: 100vh; width: 100%; }
 
-.google-btn-wrapper {
-    display: flex;
-    justify-content: center;
-    background: white;
-    border-radius: 50px;
-    padding: 2px;
-    transition: transform 0.2s ease;
-}
+.sidebar { width: 280px; background: #120c1d; padding: 30px; border-right: 1px solid #222; display: flex; flex-direction: column; }
+.side-logo { width: 100px; margin-bottom: 40px; align-self: center; }
+.sidebar nav { display: flex; flex-direction: column; gap: 15px; }
+.nav-item { background: transparent; color: var(--text-dim); border: none; padding: 15px; text-align: left; border-radius: 10px; cursor: pointer; font-size: 1rem; text-decoration: none; display: block; }
+.nav-item:hover, .nav-item.active { background: rgba(187, 134, 252, 0.1); color: var(--accent-purple); font-weight: bold; }
+.nav-item.logout { color: var(--danger-red); margin-top: auto; }
 
-.google-btn-wrapper:hover {
-    transform: scale(1.02);
-}
+.main-content { flex: 1; padding: 40px; overflow-y: auto; }
+.main-content header h1 { font-size: 2rem; margin-bottom: 30px; font-weight: 600; }
 
-.divider {
-    margin-top: 40px;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-}
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+.stat-box { background: var(--glass-bg); padding: 25px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.stat-box.accent { border-color: var(--accent-purple); }
+.stat-box span { color: var(--text-dim); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+.stat-box h2 { font-size: 2.5rem; margin-top: 10px; }
 
-.divider span {
-    font-size: 0.8rem;
-    color: #6c5b85;
-}
+.table-card { background: var(--glass-bg); border-radius: 20px; padding: 30px; border: 1px solid #333; }
+.table-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.search-box { padding: 12px 20px; border-radius: 25px; background: #1a1525; border: 1px solid #333; color: white; width: 300px; outline: none; }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: var(--text-dim); padding: 15px; border-bottom: 1px solid #333; font-weight: 600; }
+td { padding: 15px; border-bottom: 1px solid #222; }
+.block-btn { color: var(--danger-red); border: 1px solid var(--danger-red); background: transparent; padding: 6px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+.block-btn:hover { background: var(--danger-red); color: white; }
