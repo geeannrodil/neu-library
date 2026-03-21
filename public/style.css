@@ -1,75 +1,161 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@600;700&display=swap');
-
-:root {
-    --text-pure-white: #ffffff;
-    --text-muted-white: rgba(255, 255, 255, 0.6);
-    --muted-line-purple: rgba(160, 171, 192, 0.2);
-    --accent-green: #2ecc71; 
-    --bg-panel: rgba(10, 17, 40, 0.85); /* Dark Glass */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-image: url('image_14.png'); /* YOUR BACKGROUND IMAGE HERE */
+    /* Uses your purple geometric background */
+    background: #0d0914 url('./Screenshot 2026-03-19 213759.png') no-repeat center center fixed;
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: var(--text-pure-white);
+    color: #ffffff;
+    min-height: 100vh;
+    overflow: hidden; /* Prevents scrollbars on the welcome screen */
 }
 
-/* --- VISITOR PAGE --- */
-#new-visitor-page { height: 100vh; overflow: hidden; }
-.split-layout { display: flex; height: 100vh; align-items: center; justify-content: center; padding: 0 5%; }
-.left-hero { flex: 1; text-align: center; padding-right: 50px; }
-.right-panel { flex: 1; display: flex; justify-content: center; }
+/* Split Layout Container */
+.split-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: rgba(13, 9, 20, 0.4); /* Dark overlay to make text pop */
+}
 
-.neu-logo-large { height: 100px; margin-bottom: 20px; object-fit: contain; }
-.hero-sub { font-size: 12px; letter-spacing: 3px; color: var(--text-muted-white); margin-bottom: 5px; text-transform: uppercase; font-weight: 600; }
-.hero-title { font-family: 'Montserrat', sans-serif; font-size: 54px; margin: 0; }
-.hero-accent { font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--text-pure-white); margin: 0 0 30px 0; opacity: 0.9; }
-.hero-instructions { font-size: 13px; color: var(--text-muted-white); line-height: 1.6; }
+/* Left Panel: Centered Content */
+.left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
 
-/* Glass Cards */
-.glass-card { background: var(--bg-panel); border: 1px solid var(--muted-line-purple); border-radius: 20px; padding: 40px; width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
-.card-header { display: flex; justify-content: space-between; align-items: center; }
-.card-header h3 { font-family: 'Montserrat', sans-serif; margin: 0; font-size: 22px; }
-.status-badge { background: rgba(46, 204, 113, 0.2); color: var(--accent-green); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.card-sub { font-size: 12px; color: var(--text-muted-white); margin-top: 5px; }
+.brand-logo {
+    width: 120px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+}
 
-/* Reason Buttons */
-.reason-grid { display: flex; flex-direction: column; gap: 10px; }
-.reason-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--muted-line-purple); color: white; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; text-align: left; transition: 0.3s; }
-.reason-btn:hover { background: rgba(255,255,255,0.15); border-color: white; }
+.brand-subtitle {
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    color: #a89bbd;
+    margin-bottom: 5px;
+}
 
-/* Restrictions & Welcome */
-.restriction-box { display: flex; gap: 10px; align-items: start; background: rgba(255, 0, 0, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,0,0,0.3); margin-top: 20px; }
-.restriction-icon { font-size: 20px; margin: 0; color: #ff4d4d; }
-.restriction-text { font-size: 12px; color: #ffb3b3; margin: 0; line-height: 1.5; }
+.brand-title {
+    font-size: 4rem;
+    font-family: 'Times New Roman', serif; /* Matching the elegant serif look */
+    margin-bottom: 5px;
+}
 
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-.welcome-pill { background: var(--accent-green); color: white; padding: 40px 60px; border-radius: 30px; font-weight: bold; font-size: 24px; text-align: center; box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4); }
+.brand-subtext {
+    font-size: 1.2rem;
+    color: #d4c5e6;
+    margin-bottom: 40px;
+}
 
-.admin-link { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: var(--text-muted-white); text-decoration: none; font-size: 13px; border: 1px solid var(--muted-line-purple); padding: 8px 20px; border-radius: 20px; transition: 0.3s; }
-.admin-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.clock-container {
+    margin-top: 20px;
+}
 
-/* --- ADMIN PAGE --- */
-#admin-page { display: flex; background: #050914; min-height: 100vh; background-image: none; }
-#admin-page .sidebar { width: 260px; background: var(--bg-panel); height: 100vh; position: fixed; padding: 30px 20px; display: flex; flex-direction: column; color: white; box-sizing: border-box; text-align: center; border-right: 1px solid var(--muted-line-purple); }
-.fix-logo-admin { height: 60px; object-fit: contain; margin-bottom: 10px; }
-#admin-page .side-btn { background: rgba(255,255,255,0.05); color: white; border: 1px solid transparent; padding: 13px; margin-bottom: 10px; border-radius: 9px; font-weight: bold; cursor: pointer; text-decoration: none; }
-#admin-page .side-btn.active { background: rgba(46, 204, 113, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+#live-time {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
 
-#admin-page .main-content { margin-left: 260px; flex: 1; padding: 40px; }
-.search-box { width: 300px; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--muted-line-purple); background: var(--bg-panel); color: white; font-family: 'Inter'; outline: none; }
-.pdf-btn { background: var(--accent-green); color: white; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; font-family: 'Montserrat'; }
+#live-date {
+    font-size: 1rem;
+    color: #a89bbd;
+    margin-top: 5px;
+}
 
-.table-container { background: var(--bg-panel); padding: 20px; border-radius: 15px; border: 1px solid var(--muted-line-purple); }
-table { width: 100%; border-collapse: collapse; }
-th { background: rgba(255,255,255,0.05); color: var(--text-muted-white); padding: 15px; font-family: 'Montserrat'; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--muted-line-purple); text-align: left;}
-td { padding: 15px; border-bottom: 1px solid var(--muted-line-purple); font-size: 13px; }
-.reason-badge { background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 15px; font-size: 11px; }
+/* Right Panel: Glassmorphism Card */
+.right-panel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
 
-.action-btn { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
-.block-btn { background: rgba(255, 165, 0, 0.2); color: orange; margin-right: 5px; }
-.del-btn { background: rgba(255, 0, 0, 0.2); color: #ff4d4d; }
+.glass-card {
+    background: rgba(25, 20, 40, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.status-badge {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #2ecc71;
+}
+
+.instruction-text {
+    color: #a89bbd;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.google-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    background: white;
+    border-radius: 50px;
+    padding: 2px;
+    transition: transform 0.2s ease;
+}
+
+.google-btn-wrapper:hover {
+    transform: scale(1.02);
+}
+
+.divider {
+    margin-top: 40px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.divider span {
+    font-size: 0.8rem;
+    color: #6c5b85;
+}
