@@ -2,49 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NEU Library - Visitor Entry</title>
+    <title>NEU Library - Visitor Check-in</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body id="visitor-page">
-    <div class="header-banner">
-        <img src="logo.png" style="height: 70px; width: auto; margin-right: 20px;">
-        <div>
-            <h1 class="header-title">NEW ERA UNIVERSITY</h1>
-            <p class="header-subtitle">Library Visitor Log</p>
+<body id="new-visitor-page">
+    
+    <div class="split-layout">
+        <div class="left-hero">
+            <img src="logo.png" alt="NEU Logo" class="neu-logo-large">
+            <p class="hero-sub">NEW ERA UNIVERSITY</p>
+            <h1 class="hero-title">Library</h1>
+            <h2 class="hero-accent">Visitor Check-in</h2>
+            <p class="hero-instructions">Please sign in with your NEU Google account<br>to access the library facilities.</p>
+        </div>
+
+        <div class="right-panel">
+            
+            <div id="step-login" class="glass-card">
+                <div class="card-header">
+                    <h3>Check-in</h3>
+                    <span class="status-badge">● OPEN</span>
+                </div>
+                <p class="card-sub">Use your @neu.edu.ph account</p>
+
+                <div id="g_id_onload"
+                     data-client_id="316520894915-d3kl097kp2qb0j0ddqtsqno29807gt3t.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-size="large" style="display: flex; justify-content: center; margin-top: 20px;"></div>
+                
+                <div id="restriction-box" class="restriction-box" style="display: none;">
+                    <p class="restriction-icon">⚠</p>
+                    <p class="restriction-text">Access Restricted. Please contact<br>the library admin.</p>
+                </div>
+            </div>
+
+            <div id="step-reason" class="glass-card" style="display: none;">
+                <h3 style="margin-bottom: 5px;">Purpose of Visit</h3>
+                <p class="card-sub" style="margin-bottom: 20px;">Why are you visiting the library today?</p>
+                
+                <div class="reason-grid">
+                    <button class="reason-btn" onclick="submitVisit('Study')">📖 Study</button>
+                    <button class="reason-btn" onclick="submitVisit('Borrow Books')">📚 Borrow Books</button>
+                    <button class="reason-btn" onclick="submitVisit('Computer Use')">💻 Computer Use</button>
+                    <button class="reason-btn" onclick="submitVisit('Board Games')">🎲 Board Games</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="visitor-card">
-        <h2 class="card-title">Visitor Entry</h2>
-        <input type="text" id="v_name" placeholder="FULL NAME" class="pill-input">
-        <input type="text" id="v_sid" placeholder="STUDENT ID" class="pill-input">
-        <select id="v_college" class="pill-input">
-            <option value="">SELECT COLLEGE</option>
-            <option value="CICS">CICS</option>
-            <option value="CBA">CBA</option>
-            <option value="CAS">CAS</option>
-        </select>
-        <select id="v_type" class="pill-input">
-            <option value="STUDENT">STUDENT</option>
-            <option value="FACULTY">FACULTY</option>
-        </select>
-        <input type="text" id="v_reason" placeholder="REASON" class="pill-input">
-
-        <button class="btn-login" onclick="manualSubmit()">LOG IN</button>
-
-        <div class="separator">OR ADMIN ACCESS</div>
-        
-        <div id="g_id_onload"
-             data-client_id="316520894915-d3kl097kp2qb0j0ddqtsqno29807gt3t.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse">
+    <div id="step-welcome" class="modal-overlay">
+        <div class="welcome-pill">
+            <span style="font-size: 30px; display: block; margin-bottom: 10px;">✓</span>
+            WELCOME, <span id="display-name"></span>!<br>
+            <span style="font-size: 12px; font-weight: normal; margin-top: 10px; display: block;">Returning automatically...</span>
         </div>
-        <div class="g_id_signin" data-type="standard" data-shape="pill" style="display: flex; justify-content: center;"></div>
     </div>
 
-    <div id="welcomeModal" class="modal-overlay">
-        <div class="welcome-pill">WELCOME TO NEU LIBRARY, <span id="display-name"></span>!</div>
-    </div>
+    <a href="admin.html" class="admin-link">Admin Access &rarr;</a>
 
     <script src="script.js"></script>
 </body>

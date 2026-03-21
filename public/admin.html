@@ -2,62 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - NEU Library</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body id="admin-page">
     <div class="sidebar">
-        <div class="sidebar-header">
-            <img src="logo.png" style="height: 120px; margin-bottom: 1px;">
-            <h3>Admin Dashboard</h3>
-        </div>
+        <img src="logo.png" class="fix-logo-admin">
+        <h3>Admin Panel</h3>
         <button class="side-btn active">DASHBOARD</button>
-        <button class="side-btn" onclick="loadAdminTable()">REFRESH</button>
-        <a href="index.html" class="side-btn logout" style="margin-top: auto; text-decoration: none;">LOG OUT</a>
+        <button class="side-btn" onclick="loadAdminTable()">REFRESH LOGS</button>
+        <a href="index.html" class="side-btn logout" style="margin-top: auto;">LOG OUT</a>
     </div>
 
     <div class="main-content">
-        <input type="text" id="searchBar" placeholder="Search logs..." onkeyup="filterTable()" 
-               style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 25px;">
-        
-        <div class="stat-row">
-            <div class="stat-box">
-                <h1 id="todayCount">0</h1>
-                <p>TODAY</p>
-            </div>
-            <div class="stat-box">
-                <h1 id="weekCount">0</h1>
-                <p>THIS WEEK</p>
-            </div>
-            <div class="stat-box">
-                <h1 id="monthCount">0</h1>
-                <p>THIS MONTH</p>
-            </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <input type="text" id="searchBar" placeholder="Search Names, ID, Course, Reason..." onkeyup="filterTable()" class="search-box">
+            <button class="pdf-btn" onclick="exportToPDF()">EXPORT PDF</button>
         </div>
 
-        <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <button class="export-btn" onclick="exportToPDF()" 
-                    style="background: #145a32; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 15px; font-weight: bold;">
-                EXPORT PDF
-            </button>
+        <div class="table-container">
             <table id="logTable">
                 <thead>
                     <tr>
-                        <th>FULL NAME</th>
-                        <th>STUDENT ID</th>
-                        <th>PROGRAM</th>
+                        <th>NAME</th>
+                        <th>EMAIL / ID</th>
                         <th>REASON</th>
-                        <th>DATE & TIME</th>
-                        <th>ACTION</th>
+                        <th>TIME IN</th>
+                        <th>ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody id="logTableBody"></tbody>
             </table>
         </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
