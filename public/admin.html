@@ -7,34 +7,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body id="admin-page">
-    <div class="sidebar">
-        <img src="logo.png" class="fix-logo-admin">
-        <h3>Admin Panel</h3>
-        <button class="side-btn active">DASHBOARD</button>
-        <button class="side-btn" onclick="loadAdminTable()">REFRESH LOGS</button>
-        <a href="index.html" class="side-btn logout" style="margin-top: auto;">LOG OUT</a>
-    </div>
-
-    <div class="main-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <input type="text" id="searchBar" placeholder="Search Names, ID, Course, Reason..." onkeyup="filterTable()" class="search-box">
-            <button class="pdf-btn" onclick="exportToPDF()">EXPORT PDF</button>
+<body class="admin-bg">
+    <div class="admin-layout">
+        <div class="sidebar">
+            <img src="logo.png" class="sidebar-logo">
+            <nav>
+                <button class="nav-btn active">📊 Dashboard</button>
+                <button class="nav-btn" onclick="exportToPDF()">📄 Export PDF</button>
+                <a href="/" class="nav-btn logout">🚪 Logout</a>
+            </nav>
         </div>
 
-        <div class="table-container">
-            <table id="logTable">
-                <thead>
-                    <tr>
-                        <th>NAME</th>
-                        <th>EMAIL / ID</th>
-                        <th>REASON</th>
-                        <th>TIME IN</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody id="logTableBody"></tbody>
-            </table>
+        <div class="admin-main">
+            <div class="stats-grid">
+                <div class="stat-card"><h3>Today</h3><h1 id="stat-today">0</h1></div>
+                <div class="stat-card"><h3>This Week</h3><h1 id="stat-week">0</h1></div>
+                <div class="stat-card"><h3>Inside</h3><h1 id="stat-inside">0</h1></div>
+                <div class="stat-card highlight"><h3>Total</h3><h1 id="stat-total">0</h1></div>
+            </div>
+
+            <div class="log-section">
+                <div class="table-header">
+                    <h2>Visitor Logs</h2>
+                    <input type="text" id="searchBar" placeholder="Search visitors..." onkeyup="filterTable()">
+                </div>
+                <div class="table-wrapper">
+                    <table id="logTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Reason</th>
+                                <th>Date/Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminLogBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

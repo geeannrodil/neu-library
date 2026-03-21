@@ -1,108 +1,82 @@
-let currentUserPayload = null;
+let currentVisitor = null;
+
+// --- CLOCK ---
+function updateClock() {
+    const now = new Date();
+    if(document.getElementById('live-time')) {
+        document.getElementById('live-time').innerText = now.toLocaleTimeString();
+        document.getElementById('live-date').innerText = now.toDateString();
+    }
+}
+setInterval(updateClock, 1000);
 
 // --- VISITOR LOGIC ---
-
-// 1. Google Decode & Check
 function handleCredentialResponse(response) {
-    currentUserPayload = parseJwt(response.credential);
-    
-    // Check with server if user is blocked or admin
+    const user = parseJwt(response.credential);
     fetch('/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: currentUserPayload.email })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else if (data.blocked) {
-            document.getElementById('restriction-box').style.display = 'flex';
-        } else if (data.role === 'admin') {
-            window.location.href = "admin.html";
+        body: JSON.stringify({ email: user.email })
+    }).then(res => res.json()).then(data => {
+        if(data.blocked) {
+            document.getElementById('block-msg').style.display = 'block';
+        } else if(data.role === 'admin') {
+            window.location.href = '/admin.html';
         } else {
-            // Valid user, show reasons
+            currentVisitor = user;
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-reason').style.display = 'block';
         }
     });
 }
 
-// 2. Submit Reason & Show Welcome
 function submitVisit(reason) {
-    const entry = {
-        name: currentUserPayload.name,
-        email: currentUserPayload.email,
-        reason: reason
-    };
-
+    const entry = { name: currentVisitor.name, email: currentVisitor.email, reason: reason };
     fetch('/visit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(entry)
     }).then(() => {
-        document.getElementById('display-name').innerText = currentUserPayload.name.toUpperCase();
-        document.getElementById('step-welcome').style.display = 'flex';
-        setTimeout(() => { location.reload(); }, 2500); // Reset page
+        document.getElementById('visitor-name').innerText = currentVisitor.name;
+        document.getElementById('welcome-overlay').style.display = 'flex';
+        setTimeout(() => location.reload(), 3000);
     });
 }
 
-// Helper: Decode Google JWT Token
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
 // --- ADMIN LOGIC ---
+function loadAdminData() {
+    if(!document.getElementById('adminLogBody')) return;
+    fetch('/admin-data').then(res => res.json()).then(data => {
+        document.getElementById('stat-today').innerText = data.stats.today;
+        document.getElementById('stat-week').innerText = data.stats.week;
+        document.getElementById('stat-total').innerText = data.stats.total;
+        document.getElementById('stat-inside').innerText = data.stats.currentlyInside;
 
-function loadAdminTable() {
-    const tbody = document.getElementById('logTableBody');
-    if (!tbody) return;
-
-    fetch('/logs')
-    .then(res => res.json())
-    .then(logs => {
-        tbody.innerHTML = logs.map((item, index) => `
+        document.getElementById('adminLogBody').innerHTML = data.logs.map(log => `
             <tr>
-                <td>${item.name}</td>
-                <td>${item.email}</td>
-                <td><span class="reason-badge">${item.reason}</span></td>
-                <td>${item.dateTime}</td>
-                <td>
-                    <button onclick="blockUser('${item.email}')" class="action-btn block-btn">Block</button>
-                    <button onclick="deleteEntry(${index})" class="action-btn del-btn">Delete</button>
-                </td>
-            </tr>`).join('');
+                <td>${log.name}</td>
+                <td>${log.email}</td>
+                <td>${log.reason}</td>
+                <td>${log.dateTime}</td>
+                <td><button class="block-btn" onclick="blockUser('${log.email}')">Block</button></td>
+            </tr>
+        `).join('');
     });
 }
 
 function blockUser(email) {
-    if(confirm(`Are you sure you want to block ${email}?`)) {
-        fetch('/block', {
+    if(confirm(`Block ${email}?`)) {
+        fetch('/block-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        }).then(() => {
-            alert(email + " has been blocked.");
-        });
+            body: JSON.stringify({ email })
+        }).then(() => alert('User Blocked'));
     }
-}
-
-function deleteEntry(index) {
-    fetch('/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ index: index })
-    }).then(() => loadAdminTable());
 }
 
 function filterTable() {
     let val = document.getElementById("searchBar").value.toLowerCase();
-    document.querySelectorAll("#logTableBody tr").forEach(row => {
+    document.querySelectorAll("#adminLogBody tr").forEach(row => {
         row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
     });
 }
@@ -110,9 +84,13 @@ function filterTable() {
 function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text("NEU Library Visitor Logs", 14, 15);
-    doc.autoTable({ html: '#logTable', startY: 25, headStyles: {fillColor: [46, 204, 113]} });
-    doc.save("NEU_Library_Logs.pdf");
+    doc.text("NEU Library Logs", 14, 15);
+    doc.autoTable({ html: '#logTable', startY: 20 });
+    doc.save("Library_Logs.pdf");
 }
 
-window.onload = loadAdminTable;
+function parseJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
+}
+
+window.onload = () => { updateClock(); loadAdminData(); };

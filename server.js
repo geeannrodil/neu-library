@@ -1,19 +1,18 @@
 const express = require("express");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static("public")); // Put your HTML/CSS/JS and images in a "public" folder
+app.use(express.static("public"));
 
 let visits = [];
-let blockedUsers = []; // Stores blocked emails
-const admins = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph"];
+let blockedEmails = []; 
+const admins = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph"]; // Add your email here to test admin access
 
-// 1. Auth & Block Check
+// 1. Auth: Allow ANY gmail, but check if blocked or admin
 app.post("/auth", (req, res) => {
     const { email } = req.body;
-    if (!email.endsWith("@neu.edu.ph")) return res.json({ error: "Access Denied: Use @neu.edu.ph only." });
-    if (blockedUsers.includes(email)) return res.json({ blocked: true });
+    if (blockedEmails.includes(email)) return res.json({ blocked: true });
     
     const role = admins.includes(email) ? "admin" : "user";
     res.json({ role, email, blocked: false });
@@ -24,29 +23,33 @@ app.post("/visit", (req, res) => {
     const newEntry = { 
         ...req.body, 
         dateTime: new Date().toLocaleString('en-PH'), 
-        timestamp: new Date() 
+        timestamp: new Date().getTime() 
     };
-    visits.unshift(newEntry); // Adds to the top of the list
+    visits.unshift(newEntry);
     res.json({ success: true });
 });
 
-// 3. Get Logs for Admin Table
-app.get("/logs", (req, res) => {
-    res.json(visits);
+// 3. Stats & Logs for Admin
+app.get("/admin-data", (req, res) => {
+    const now = new Date().getTime();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const oneWeek = 7 * oneDay;
+
+    const stats = {
+        today: visits.filter(v => (now - v.timestamp) < oneDay).length,
+        week: visits.filter(v => (now - v.timestamp) < oneWeek).length,
+        total: visits.length,
+        currentlyInside: Math.floor(visits.length * 0.3) // Simulated stat
+    };
+
+    res.json({ stats, logs: visits, blocked: blockedEmails });
 });
 
-// 4. Block a User
-app.post("/block", (req, res) => {
+// 4. Block/Unblock
+app.post("/block-user", (req, res) => {
     const { email } = req.body;
-    if (!blockedUsers.includes(email)) blockedUsers.push(email);
-    res.json({ success: true, blockedUsers });
-});
-
-// 5. Delete Log
-app.post("/delete", (req, res) => {
-    const { index } = req.body;
-    visits.splice(index, 1);
+    if (!blockedEmails.includes(email)) blockedEmails.push(email);
     res.json({ success: true });
 });
 
-app.listen(PORT, () => console.log(`NEU Library System Active: http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
