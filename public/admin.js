@@ -25,8 +25,10 @@ function loadDashboard() {
             document.getElementById('monthCount').innerText = data.stats.month;
             document.getElementById('totalCount').innerText = data.stats.total;
 
-            renderTable(allLogs);
-            renderBlockedUsers(data.blocked); // NEW: Load the blocked list
+            // FIX: Instead of raw renderTable, we run it through the filter first!
+            filterLogs(); 
+            
+            renderBlockedUsers(data.blocked);
         })
         .catch(err => console.error("Error loading dashboard:", err));
 }
@@ -48,6 +50,28 @@ function renderTable(logsToDisplay) {
             </td>
         </tr>
     `).join('');
+}
+
+// --- THE MISSING SEARCH FILTER LOGIC ---
+function filterLogs() {
+    const searchInput = document.getElementById('logSearch');
+    if (!searchInput) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    // Filter the global array based on what is typed in the search box
+    const filtered = allLogs.filter(log => {
+        return (
+            (log.name && log.name.toLowerCase().includes(searchTerm)) ||
+            (log.email && log.email.toLowerCase().includes(searchTerm)) ||
+            (log.course && log.course.toLowerCase().includes(searchTerm)) ||
+            (log.userType && log.userType.toLowerCase().includes(searchTerm)) ||
+            (log.reason && log.reason.toLowerCase().includes(searchTerm))
+        );
+    });
+
+    // Draw the table with ONLY the filtered results
+    renderTable(filtered);
 }
 
 // 3. RENDER BLOCKED USERS (User Management)

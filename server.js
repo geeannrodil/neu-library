@@ -1,12 +1,33 @@
 const express = require("express");
+const fs = require("fs"); // NEW: Allows the server to read/write files
+const path = require("path"); // NEW: Helps find the file path safely
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static("public"));
 
-let visits = []; // This is the official array that holds our data!
-let blockedEmails = []; 
+// --- 💾 DATABASE SETUP (Replaces the old arrays) ---
+const dbPath = path.join(__dirname, 'database.json');
+
+// Function to load data from the file when the server wakes up
+function loadDB() {
+    if (fs.existsSync(dbPath)) {
+        const rawData = fs.readFileSync(dbPath);
+        return JSON.parse(rawData);
+    }
+    // If no file exists yet, create an empty structure
+    return { visits: [], blockedEmails: [] }; 
+}
+
+// Function to save data to the file so it never disappears
+function saveDB() {
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+}
+
+// Load the database into memory
+let db = loadDB(); 
+// ---------------------------------------------------
 
 // Add your email here to be recognized as an admin
 const adminEmails = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph", "your-email@gmail.com"]; 
@@ -23,8 +44,8 @@ app.post('/auth', (req, res) => {
         });
     }
 
-    // 2. Check if the user is manually blocked by an admin
-    if (blockedEmails.includes(email)) {
+    // 2. Check if the user is manually blocked by an admin (Now checks the database)
+    if (db.blockedEmails.includes(email)) {
         return res.json({ 
             success: false, 
             blocked: true, 
@@ -40,6 +61,7 @@ app.post('/auth', (req, res) => {
     // 4. Otherwise, they are a valid NEU visitor
     res.json({ success: true, role: 'user' });
 });
+
 // 2. RECORD VISIT ROUTE: Saves the data from the frontend
 app.post('/visit', (req, res) => {
     const { name, email, userType, course, reason } = req.body;
@@ -59,7 +81,11 @@ app.post('/visit', (req, res) => {
     };
 
     console.log(`✅ New Visit Saved: ${name} (${userType}) - ${course}`);
-    visits.push(newLog); // Push to the 'visits' array
+    
+    // Push to the database array and SAVE TO FILE
+    db.visits.push(newLog); 
+    saveDB(); 
+    
     res.status(200).send({ message: "Success" });
 });
 
@@ -71,26 +97,31 @@ app.get("/admin-data", (req, res) => {
     const oneMonth = 30 * oneDay;
 
     const stats = {
-        today: visits.filter(v => (now - v.timestamp) < oneDay).length,
-        week: visits.filter(v => (now - v.timestamp) < oneWeek).length,
-        month: visits.filter(v => (now - v.timestamp) < oneMonth).length,
-        total: visits.length
+        today: db.visits.filter(v => (now - v.timestamp) < oneDay).length,
+        week: db.visits.filter(v => (now - v.timestamp) < oneWeek).length,
+        month: db.visits.filter(v => (now - v.timestamp) < oneMonth).length,
+        total: db.visits.length
     };
 
-    res.json({ stats, logs: visits, blocked: blockedEmails });
+    // Send data straight from the database
+    res.json({ stats, logs: db.visits, blocked: db.blockedEmails });
 });
 
 // 4. BLOCK USER: Adds an email to the block list
 app.post("/block-user", (req, res) => {
     const { email } = req.body;
-    if (!blockedEmails.includes(email)) blockedEmails.push(email);
+    if (!db.blockedEmails.includes(email)) {
+        db.blockedEmails.push(email);
+        saveDB(); // SAVE TO FILE
+    }
     res.json({ success: true });
 });
 
+// 5. UNBLOCK USER: Removes an email from the block list
 app.post("/unblock-user", (req, res) => {
     const { email } = req.body;
-    // Remove the email from the blockedEmails array
-    blockedEmails = blockedEmails.filter(e => e !== email);
+    db.blockedEmails = db.blockedEmails.filter(e => e !== email);
+    saveDB(); // SAVE TO FILE
     res.json({ success: true });
 });
 
