@@ -14,19 +14,32 @@ const adminEmails = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph", "your-
 // 1. AUTH ROUTE: Checks if user is admin, blocked, or regular student
 app.post('/auth', (req, res) => {
     const { email } = req.body;
-    
-    if (blockedEmails.includes(email)) {
-        return res.json({ blocked: true });
-    }
-    
-    if (adminEmails.includes(email)) {
-        return res.json({ role: 'admin' });
-    }
-    
-    // If not admin or blocked, they are a normal user/visitor
-    res.json({ role: 'user' });
-});
 
+    // 1. Check if the email is from NEU
+    if (!email.endsWith('@neu.edu.ph')) {
+        return res.json({ 
+            success: false, 
+            message: "Access Denied: Please use your NEU student/faculty email." 
+        });
+    }
+
+    // 2. Check if the user is manually blocked by an admin
+    if (blockedEmails.includes(email)) {
+        return res.json({ 
+            success: false, 
+            blocked: true, 
+            message: "Your account has been restricted by the administrator." 
+        });
+    }
+
+    // 3. Check if they are an Admin
+    if (adminEmails.includes(email)) {
+        return res.json({ success: true, role: 'admin' });
+    }
+
+    // 4. Otherwise, they are a valid NEU visitor
+    res.json({ success: true, role: 'user' });
+});
 // 2. RECORD VISIT ROUTE: Saves the data from the frontend
 app.post('/visit', (req, res) => {
     const { name, email, userType, course, reason } = req.body;
@@ -71,6 +84,13 @@ app.get("/admin-data", (req, res) => {
 app.post("/block-user", (req, res) => {
     const { email } = req.body;
     if (!blockedEmails.includes(email)) blockedEmails.push(email);
+    res.json({ success: true });
+});
+
+app.post("/unblock-user", (req, res) => {
+    const { email } = req.body;
+    // Remove the email from the blockedEmails array
+    blockedEmails = blockedEmails.filter(e => e !== email);
     res.json({ success: true });
 });
 

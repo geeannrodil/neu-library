@@ -20,7 +20,9 @@ window.onload = () => {
 // --- 2. AUTH HANDLER (Visitor Login) ---
 function handleCredentialResponse(response) {
     const payload = parseJwt(response.credential);
-    
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTestMode = urlParams.get('mode') === 'test';
+
     fetch('/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,19 +30,23 @@ function handleCredentialResponse(response) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.blocked) {
-            alert("This account has been blocked from the library system.");
-        } else if (data.role === 'admin') {
+        if (!data.success) {
+            // Show the Error Card if not @neu.edu.ph
+            document.getElementById('step-login').style.display = 'none';
+            document.getElementById('error-card').style.display = 'block';
+        } 
+        // IF ADMIN AND NOT IN TEST MODE -> GO TO DASHBOARD
+        else if (data.role === 'admin' && !isTestMode) {
             window.location.href = '/admin.html';
-        } else {
-            // Success: Move to Details/Reason Screen
+        } 
+        // IF STUDENT OR ADMIN-IN-TEST-MODE -> SHOW REASON PICKER
+        else {
             currentUser = payload;
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-reason').style.display = 'block';
         }
     });
 }
-
 // --- 3. RECORD VISIT (Visitor Submit) ---
 function submitVisit(reason) {
     const userType = document.querySelector('input[name="userType"]:checked').value;
