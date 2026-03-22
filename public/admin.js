@@ -106,3 +106,48 @@ function switchView(viewId, event) {
 }
 
 // Keep your existing filterLogs, exportPDF, and logout functions below...
+
+// --- EXPORT PDF FUNCTION ---
+function exportPDF() {
+    // Check if jsPDF is loaded
+    if (!window.jspdf) {
+        alert("PDF library is still loading. Please try again in a second.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add a title to the PDF
+    doc.text("NEU Library Visitor Logs", 14, 15);
+    
+    // Map the data from your allLogs array to rows
+    const tableData = allLogs.map(log => [
+        log.name, 
+        log.userType, 
+        log.course, 
+        log.reason, 
+        log.dateTime
+    ]);
+
+    // Generate the table
+    doc.autoTable({
+        head: [['Name', 'Type', 'Course', 'Purpose', 'Timestamp']],
+        body: tableData,
+        startY: 20,
+        theme: 'grid',
+        headStyles: { fillColor: [187, 134, 252] }, // Purple theme
+        styles: { fontSize: 9 }
+    });
+    
+    // Download the file
+    doc.save("NEU_Library_Logs.pdf");
+}
+
+// --- LOGOUT FUNCTION ---
+function logout() {
+    if (confirm("Are you sure you want to sign out?")) {
+        // Redirects back to the main login/visitor page
+        window.location.href = '/'; 
+    }
+}
