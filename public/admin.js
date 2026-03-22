@@ -3,6 +3,9 @@ let allLogs = [];
 document.addEventListener('DOMContentLoaded', () => {
     loadDashboard();
     
+    // THE REAL-TIME MAGIC: Refresh the data every 5 seconds automatically!
+    setInterval(loadDashboard, 5000); 
+    
     const searchInput = document.getElementById('logSearch');
     if (searchInput) {
         searchInput.addEventListener('input', filterLogs);
@@ -70,23 +73,67 @@ function renderBlockedUsers(blockedList) {
 
 // 4. BLOCK/UNBLOCK ACTIONS
 function blockUser(email) {
-    if (confirm(`Are you sure you want to block ${email}?`)) {
-        fetch('/block-user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        }).then(() => loadDashboard());
-    }
+    Swal.fire({
+        title: 'Block User?',
+        text: `Are you sure you want to restrict ${email}?`,
+        icon: 'error',
+        background: '#151b23',
+        color: '#ffffff',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4757',
+        cancelButtonColor: '#4b5563',
+        confirmButtonText: 'Yes, block them'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/block-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            }).then(() => {
+                Swal.fire({
+                    title: 'Blocked!',
+                    text: 'User has been moved to the restricted list.',
+                    icon: 'success',
+                    background: '#151b23',
+                    color: '#ffffff',
+                    confirmButtonColor: '#bb86fc' // Purple accent
+                });
+                loadDashboard();
+            });
+        }
+    });
 }
 
 function unblockUser(email) {
-    if (confirm(`Allow ${email} to access the library again?`)) {
-        fetch('/unblock-user', { // Make sure this route exists in server.js!
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        }).then(() => loadDashboard());
-    }
+    Swal.fire({
+        title: 'Unblock User?',
+        text: `Allow ${email} to access the library again?`,
+        icon: 'question',
+        background: '#151b23',
+        color: '#ffffff',
+        showCancelButton: true,
+        confirmButtonColor: '#2ecc71', // Green confirm button
+        cancelButtonColor: '#4b5563',
+        confirmButtonText: 'Yes, unblock'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/unblock-user', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            }).then(() => {
+                Swal.fire({
+                    title: 'Restored!',
+                    text: 'User can now sign in normally.',
+                    icon: 'success',
+                    background: '#151b23',
+                    color: '#ffffff',
+                    confirmButtonColor: '#bb86fc'
+                });
+                loadDashboard();
+            });
+        }
+    });
 }
 
 // 5. SIDEBAR NAVIGATION LOGIC
@@ -146,8 +193,22 @@ function exportPDF() {
 
 // --- LOGOUT FUNCTION ---
 function logout() {
-    if (confirm("Are you sure you want to sign out?")) {
-        // Redirects back to the main login/visitor page
-        window.location.href = '/'; 
-    }
+    Swal.fire({
+        title: 'Sign Out?',
+        text: "Are you sure you want to leave the dashboard?",
+        icon: 'warning',
+        background: '#151b23', // Matches your dark theme
+        color: '#ffffff',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4757', // Red confirm button
+        cancelButtonColor: '#4b5563',  // Gray cancel button
+        confirmButtonText: '<i class="fas fa-sign-out-alt"></i> Yes, sign out',
+        customClass: {
+            popup: 'glass-popup' // Optional: if you want to add CSS to it later
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/'; 
+        }
+    });
 }
