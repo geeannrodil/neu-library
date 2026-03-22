@@ -13,18 +13,21 @@ const adminEmails = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph", "your-
 // 1. Auth: Allow ANY gmail, check if blocked or admin
 // Inside server.js
 app.post('/visit', (req, res) => {
-    // We added userType and course here!
-    const { name, email, userType, course, reason } = req.body;
-    const timestamp = new Date().toLocaleString();
-
-    const newLog = { name, email, userType, course, reason, timestamp };
+    // Make sure these names match exactly what is in your script.js data object
+    const { name, email, userType, course, reason } = req.body; 
     
-    // Push it to your database or array
-    visitLogs.push(newLog); 
+    const newLog = { 
+        name, 
+        email, 
+        userType, // Check if this is here
+        course,   // Check if this is here
+        reason, 
+        dateTime: new Date().toLocaleString() 
+    };
 
+    visitLogs.push(newLog);
     res.status(200).send({ message: "Success" });
 });
-
 // 2. Record Visit
 app.post('/visit', (req, res) => {
     const { name, email, userType, course, reason } = req.body;
