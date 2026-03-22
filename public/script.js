@@ -1,17 +1,23 @@
 let currentUser = null;
 
-// --- CLOCK ---
+// --- 1. CLOCK & INITIALIZATION ---
 function updateClock() {
     const now = new Date();
     const timeEl = document.getElementById('live-time');
-    if (timeEl) {
-        timeEl.innerText = now.toLocaleTimeString();
-        document.getElementById('live-date').innerText = now.toDateString();
-    }
+    const dateEl = document.getElementById('live-date');
+    if (timeEl) timeEl.innerText = now.toLocaleTimeString();
+    if (dateEl) dateEl.innerText = now.toDateString();
 }
 setInterval(updateClock, 1000);
 
-// --- AUTH HANDLER ---
+window.onload = () => { 
+    updateClock(); 
+    if (document.getElementById('logBody')) {
+        loadDashboard(); // Only runs if we are on the Admin page
+    }
+};
+
+// --- 2. AUTH HANDLER (Visitor Login) ---
 function handleCredentialResponse(response) {
     const payload = parseJwt(response.credential);
     
@@ -23,11 +29,11 @@ function handleCredentialResponse(response) {
     .then(res => res.json())
     .then(data => {
         if (data.blocked) {
-            document.getElementById('block-msg').style.display = 'block';
+            alert("This account has been blocked from the library system.");
         } else if (data.role === 'admin') {
             window.location.href = '/admin.html';
         } else {
-            // TRANSITION TO REASON PICKER
+            // Success: Move to Details/Reason Screen
             currentUser = payload;
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-reason').style.display = 'block';
@@ -35,9 +41,28 @@ function handleCredentialResponse(response) {
     });
 }
 
-// --- RECORD VISIT ---
+// --- 3. RECORD VISIT (Visitor Submit) ---
 function submitVisit(reason) {
-    const data = { name: currentUser.name, email: currentUser.email, reason: reason };
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    const courseInput = document.getElementById('course').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+
+    if (courseInput === "") {
+        errorMsg.innerText = "⚠️ Please enter your Program or Course.";
+        document.getElementById('course').focus();
+        return; 
+    }
+    
+    errorMsg.innerText = "";
+
+    const data = { 
+        name: currentUser.name, 
+        email: currentUser.email, 
+        userType: userType,
+        course: courseInput,
+        reason: reason 
+    };
+
     fetch('/visit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,32 +72,54 @@ function submitVisit(reason) {
         document.getElementById('visitor-name').innerText = currentUser.name;
         document.getElementById('welcome-overlay').style.display = 'flex';
         setTimeout(() => location.reload(), 3000);
-    });
+    })
+    .catch(err => console.error("Error saving visit:", err));
 }
 
-// --- ADMIN DASHBOARD ---
+// --- 4. ADMIN DASHBOARD (Fetch & Display) ---
 function loadDashboard() {
-    if (!document.getElementById('logBody')) return;
-    fetch('/admin-data').then(res => res.json()).then(data => {
-        document.getElementById('s-today').innerText = data.stats.today;
-        document.getElementById('s-week').innerText = data.stats.week;
-        document.getElementById('s-month').innerText = data.stats.month;
-        document.getElementById('s-total').innerText = data.stats.total;
+    const logBody = document.getElementById('logBody');
+    if (!logBody) return;
 
-        document.getElementById('logBody').innerHTML = data.logs.map(log => `
-            <tr>
-                <td>${log.name}</td>
-                <td>${log.email}</td>
-                <td>${log.reason}</td>
-                <td>${log.dateTime}</td>
-                <td><button class="block-btn" onclick="blockUser('${log.email}')">Block</button></td>
-            </tr>
-        `).join('');
+    fetch('/admin-data')
+        .then(res => res.json())
+        .then(data => {
+            // Update the Stats Cards
+            document.getElementById('s-today').innerText = data.stats.today;
+            document.getElementById('s-week').innerText = data.stats.week;
+            document.getElementById('s-month').innerText = data.stats.month;
+            document.getElementById('s-total').innerText = data.stats.total;
+
+            // Generate Table Rows with New Columns
+            logBody.innerHTML = data.logs.map(log => `
+                <tr>
+                    <td><strong>${log.name}</strong><br><small>${log.email}</small></td>
+                    <td><span class="type-badge ${log.userType.toLowerCase()}">${log.userType}</span></td>
+                    <td>${log.course}</td>
+                    <td>${log.reason}</td>
+                    <td>${log.dateTime || log.timestamp}</td>
+                    <td>
+                        <button class="block-btn" onclick="blockUser('${log.email}')">Block</button>
+                    </td>
+                </tr>
+            `).join('');
+        });
+}
+
+// --- 5. SEARCH LOGS (Real-time Filtering) ---
+function searchLogs() {
+    const input = document.getElementById('search').value.toLowerCase();
+    const rows = document.querySelectorAll('#logTable tbody tr');
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
     });
 }
 
+// --- 6. ADMIN ACTIONS ---
 function blockUser(email) {
-    if (confirm(`Block ${email}?`)) {
+    if (confirm(`Are you sure you want to block ${email}?`)) {
         fetch('/block-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -85,14 +132,18 @@ function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.text("NEU Library Visitor Logs", 14, 15);
-    doc.autoTable({ html: '#logTable', startY: 20 });
+    doc.autoTable({ 
+        html: '#logTable', 
+        startY: 20,
+        theme: 'grid',
+        headStyles: { fillColor: [187, 134, 252] } // Matching purple theme for PDF
+    });
     doc.save("Library_Logs.pdf");
 }
 
+// --- HELPER: PARSE GOOGLE TOKEN ---
 function parseJwt(token) {
     let base64Url = token.split('.')[1];
     let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(window.atob(base64));
 }
-
-window.onload = () => { updateClock(); loadDashboard(); };

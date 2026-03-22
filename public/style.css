@@ -155,3 +155,67 @@ tr:last-child td { border-bottom: none; }
 /* Modern Action Pill Buttons */
 .block-btn { color: #ff7675; border: 1px solid rgba(255, 118, 117, 0.3); background: rgba(255, 118, 117, 0.05); padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
 .block-btn:hover { background: #ff7675; color: #000; border-color: #ff7675; box-shadow: 0 0 15px rgba(255, 118, 117, 0.3); }
+
+/* =========================================
+   NEW FORM ELEMENTS (Wow Factor)
+========================================= */
+.form-group { text-align: left; margin-bottom: 20px; }
+.form-group label { display: block; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Custom Radio Toggles */
+.radio-group { display: flex; gap: 15px; }
+.radio-label { flex: 1; position: relative; cursor: pointer; }
+.radio-label input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+.radio-custom { 
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); 
+    border-radius: 12px; color: var(--text-dim); font-weight: 500; transition: all 0.3s ease; 
+}
+.radio-label input:checked ~ .radio-custom { 
+    background: rgba(187, 134, 252, 0.15); border-color: var(--accent-purple); 
+    color: var(--accent-purple); box-shadow: 0 0 20px rgba(187, 134, 252, 0.15); 
+}
+.radio-label:hover .radio-custom { background: rgba(255,255,255,0.08); }
+
+/* Glowing Glass Input */
+.glass-input { 
+    width: 100%; padding: 15px 20px; background: rgba(0,0,0,0.3); 
+    border: 1px solid var(--glass-border); border-radius: 12px; color: white; 
+    font-size: 1rem; outline: none; transition: 0.3s; 
+}
+.glass-input:focus { 
+    border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(187,134,252,0.2); 
+    background: rgba(0,0,0,0.5); 
+}
+.glass-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.sub-heading { text-align: left; margin: 10px 0 15px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+.error-text { color: var(--danger-red); font-size: 0.85rem; margin-top: 15px; min-height: 20px; font-weight: 500; }
+
+/* Type Badges */
+.type-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.type-badge.student {
+    background: rgba(187, 134, 252, 0.1);
+    color: var(--accent-purple);
+    border: 1px solid var(--accent-purple);
+}
+.type-badge.faculty {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-green);
+    border: 1px solid var(--success-green);
+}
+
+/* Make names stand out */
+td strong {
+    color: white;
+    font-size: 1rem;
+}
+td small {
+    color: var(--text-dim);
+}

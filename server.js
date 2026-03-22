@@ -11,23 +11,33 @@ let blockedEmails = [];
 const adminEmails = ["jcesperanza@neu.edu.ph", "geeann.rodil@neu.edu.ph", "your-email@gmail.com"]; 
 
 // 1. Auth: Allow ANY gmail, check if blocked or admin
-app.post("/auth", (req, res) => {
-    const { email } = req.body;
-    if (blockedEmails.includes(email)) return res.json({ blocked: true });
+// Inside server.js
+app.post('/visit', (req, res) => {
+    // We added userType and course here!
+    const { name, email, userType, course, reason } = req.body;
+    const timestamp = new Date().toLocaleString();
+
+    const newLog = { name, email, userType, course, reason, timestamp };
     
-    const isAdmin = adminEmails.includes(email);
-    res.json({ role: isAdmin ? "admin" : "user", email, blocked: false });
+    // Push it to your database or array
+    visitLogs.push(newLog); 
+
+    res.status(200).send({ message: "Success" });
 });
 
 // 2. Record Visit
-app.post("/visit", (req, res) => {
-    const newEntry = { 
-        ...req.body, 
-        dateTime: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }), 
-        timestamp: new Date().getTime() 
-    };
-    visits.unshift(newEntry); // Add to start of list
-    res.json({ success: true });
+app.post('/visit', (req, res) => {
+    const { name, email, userType, course, reason } = req.body;
+    const timestamp = new Date().toLocaleString();
+
+    // Log to console for debugging
+    console.log(`New Visit: ${name} (${userType}) - ${course}`);
+
+    // If using an array to store logs:
+    const newLog = { name, email, userType, course, reason, timestamp };
+    visitLogs.push(newLog); 
+
+    res.status(200).send({ message: "Visit recorded!" });
 });
 
 // 3. Admin Dashboard Data

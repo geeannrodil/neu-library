@@ -35,23 +35,46 @@
             </div>
 
             <div id="step-reason" class="glass-card" style="display:none;">
-                <h2>Purpose of Visit</h2>
-                <p class="instruction">What brings you to the library today?</p>
-                <div class="reason-grid">
-                    <button onclick="submitVisit('Studying')">📖 Studying</button>
-                    <button onclick="submitVisit('Research')">🔍 Research</button>
-                    <button onclick="submitVisit('Borrowing')">📚 Borrowing</button>
-                    <button onclick="submitVisit('Computer')">💻 Computer Use</button>
-                </div>
-            </div>
+    <div class="card-header">
+        <h2>Visitor Details</h2>
+    </div>
+    
+    <div class="form-group">
+        <label>I am a:</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="userType" value="Student" checked>
+                <span class="radio-custom">🎓 Student</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="userType" value="Faculty">
+                <span class="radio-custom">💼 Faculty</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Program / Course:</label>
+        <input type="text" id="course" class="glass-input" placeholder="e.g., BSCS, BSIT, CBA...">
+    </div>
+
+    <h3 class="sub-heading">Purpose of Visit:</h3>
+    <div class="reason-grid">
+        <button onclick="submitVisit('Studying')">📖 Studying</button>
+        <button onclick="submitVisit('Research')">🔍 Research</button>
+        <button onclick="submitVisit('Borrowing')">📚 Borrowing</button>
+        <button onclick="submitVisit('Computer')">💻 Computer Use</button>
+    </div>
+    <p id="error-msg" class="error-text"></p>
+</div>
         </div>
     </div>
 
     <div id="welcome-overlay" class="modal-overlay">
         <div class="welcome-card">
             <div class="check-circle">✓</div>
-            <h1>SUCCESSFUL!</h1>
-            <p id="visitor-name">Student Name</p>
+            <h1>WELCOME TO NEU LIBRARY</h1>
+            <p id="visitor-name">Student Name!</p>
             <small style="color: #a89bbd;">Redirecting...</small>
         </div>
     </div>
